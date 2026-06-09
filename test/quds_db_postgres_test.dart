@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:quds_db_postgres/quds_db_postgres.dart';
 import 'package:quds_db_interface/quds_db_interface.dart';
 
@@ -28,7 +28,8 @@ void main() {
         host: '127.0.0.1',
         port: 5432,
         userName: 'postgres',
-        password: '0', // Adjust if 'postgres' is the password for the local instance
+        password:
+            '0', // Adjust if 'postgres' is the password for the local instance
       ),
     );
 
@@ -58,7 +59,10 @@ void main() {
       expect(allNotes.length, equals(1));
       expect(allNotes.first.title.value, equals('My Postgres Note'));
       expect(allNotes.first.isImportant.value, equals(true));
-      expect(allNotes.first.dueDate.value?.millisecondsSinceEpoch, equals(1749360000000));
+      expect(
+        allNotes.first.dueDate.value?.millisecondsSinceEpoch,
+        equals(1749360000000),
+      );
     });
 
     test('Bulk Transactions', () async {
@@ -77,7 +81,7 @@ void main() {
       await provider.insertEntry(note);
 
       expect(note.id.value, isNotNull);
-      
+
       note.title.value = 'Updated Title';
       await provider.updateEntry(note);
 
