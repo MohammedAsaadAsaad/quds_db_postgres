@@ -1,11 +1,12 @@
 name: quds_db_postgres
 description: "Postgres adapter for quds_db_interface package. Provides complete SQL implementation using postgres."
 version: 0.0.2
-homepage: https://github.com/my_org/quds_db_postgres
+homepage: https://github.com/MohammedAsaadAsaad/quds_db_postgres
+repository: https://github.com/MohammedAsaadAsaad/quds_db_postgres
 
 environment:
   sdk: ^3.11.5
-  flutter: ">=1.17.0"
+  # flutter: ">=1.17.0"
 
 dependencies:
   # flutter:
