@@ -1,6 +1,6 @@
 name: quds_db_postgres
 description: "Postgres adapter for quds_db_interface package. Provides complete SQL implementation using postgres."
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/MohammedAsaadAsaad/quds_db_postgres
 repository: https://github.com/MohammedAsaadAsaad/quds_db_postgres
 
