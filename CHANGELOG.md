@@ -9,3 +9,7 @@
 ## 0.0.3
 
 - Updated homepage, repository
+
+## 0.0.4
+
+- update project files for consistency and formatting improvements
