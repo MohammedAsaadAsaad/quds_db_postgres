@@ -359,17 +359,17 @@ packages:
     dependency: "direct main"
     description:
       name: quds_db_interface
-      sha256: b0049044e97b0d1563b9c8b6d3bf1dd27aaf531671522a0be22d10325777c3ec
+      sha256: "3699a264d3bb60009532d4284aa71723c5a4926cafc00d39c34a263f23b8dba6"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2"
+    version: "0.0.3"
   quds_db_postgres:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "0.0.3"
+    version: "0.0.5"
   record_use:
     dependency: transitive
     description:

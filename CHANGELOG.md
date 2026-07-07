@@ -13,3 +13,8 @@
 ## 0.0.4
 
 - update project files for consistency and formatting improvements
+
+
+## 0.0.5
+
+- Upgraded the dependencies.
