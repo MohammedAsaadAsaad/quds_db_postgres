@@ -1,11 +1,25 @@
 import 'dart:async';
 import 'package:postgres/postgres.dart';
 import 'package:quds_db_interface/quds_db_interface.dart';
+import '../migration/postgres_migration_context.dart';
+import '../schema/postgres_schema_inspector.dart';
+import '../schema/postgres_schema_migrator.dart';
 
 class PostgresDatabaseConnection extends DatabaseConnection {
   final Pool _pool;
   static final _transactionKey = Object();
   bool _isClosed = false;
+
+  @override
+  late final PostgresSchemaInspector schema = PostgresSchemaInspector(this);
+  @override
+  late final PostgresSchemaMigrator migration = PostgresSchemaMigrator(this);
+  @override
+  late final MigrationRunner migrations = SchemaMigrationRunner(
+    connection: this,
+    contextFactory: () => PostgresMigrationContext(this),
+    ensureJournalTable: PostgresMigrationContext.ensureJournalTable,
+  );
 
   PostgresDatabaseConnection(this._pool);
 

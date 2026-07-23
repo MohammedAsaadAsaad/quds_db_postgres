@@ -38,7 +38,7 @@ dependencies:
   lucide_icons: ^0.257.0
   quds_db_postgres:
     path: ..
-  quds_db_interface: ^0.0.2
+  quds_db_interface: ^0.0.4
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:quds_db_interface/quds_db_interface.dart';
 import '../adapters/postgres_database_connection.dart';
 import '../builders/postgres_query_builder.dart';
+import '../schema/postgres_schema_utils.dart';
 
 class PostgresTableProvider<T extends DbModel>
     implements TableProvider<T>, TableProviderContract<T> {
@@ -122,18 +123,30 @@ class PostgresTableProvider<T extends DbModel>
   String get tableName => _tableName;
 
   String _mapToPostgresColumnDef(FieldDefinition field) {
-    String def = field.columnDefinition;
-    if (field.columnName != null && def.startsWith(field.columnName!)) {
-      def = '"${field.columnName}"' + def.substring(field.columnName!.length);
+    return PostgresSchemaUtils.mapToColumnDef(field);
+  }
+
+  @override
+  Future<void> ensureField(FieldDefinition field, {bool safe = false}) async {
+    try {
+      await connection.migration.ensureField(tableName, field);
+    } catch (e) {
+      if (safe) {
+        // ignore: avoid_print
+        print('Migration warning ($tableName.${field.columnName}): $e');
+      } else {
+        rethrow;
+      }
     }
-    def = def.replaceAll(
-      'INTEGER PRIMARY KEY AUTOINCREMENT',
-      'BIGSERIAL PRIMARY KEY',
+  }
+
+  @override
+  Future<void> ensureBooleanNotNull(BoolField field, {bool safe = false}) async {
+    await connection.migration.ensureBooleanNotNull(
+      tableName,
+      field,
+      safe: safe,
     );
-    def = def.replaceAll('INTEGER', 'BIGINT');
-    def = def.replaceAll('REAL', 'DOUBLE PRECISION');
-    def = def.replaceAll('TEXT', 'TEXT');
-    return def;
   }
 
   @override
@@ -158,35 +171,8 @@ class PostgresTableProvider<T extends DbModel>
     final createTableSql = 'CREATE TABLE IF NOT EXISTS "$tableName" ($columns)';
     await connection.execute(createTableSql);
 
-    // Auto-Migration
-    final existingColumnsResult = await connection.query(
-      'SELECT column_name FROM information_schema.columns WHERE table_name = ?',
-      [tableName],
-    );
-    final existingColumns = existingColumnsResult.map((row) => row['column_name'] as String).toList();
-
     for (var field in _cachedModelInstance.getAllFields()) {
-      if (field.columnName != null && !existingColumns.contains(field.columnName) && !existingColumns.contains('"${field.columnName}"')) {
-        // Exclude ID since it's already serial primary key
-        if (field.columnName == 'id') continue;
-        
-        String colDef;
-        if (['serverId', 'creationTime', 'modificationTime'].contains(field.columnName)) {
-           colDef = 'BIGINT';
-        } else {
-           colDef = _mapToPostgresColumnDef(field).replaceFirst('"${field.columnName}" ', '');
-        }
-        await connection.execute('ALTER TABLE "$tableName" ADD COLUMN "${field.columnName}" $colDef');
-      }
-    }
-
-    for (var field in fields) {
-      if (field is FieldWithValue && field.isIndexed) {
-        final indexName = 'idx_${tableName}_${field.columnName}';
-        final createIndexSql =
-            'CREATE INDEX IF NOT EXISTS "$indexName" ON "$tableName" ("${field.columnName}")';
-        await connection.execute(createIndexSql);
-      }
+      await connection.migration.ensureField(tableName, field);
     }
   }
 

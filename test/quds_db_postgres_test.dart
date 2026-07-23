@@ -28,8 +28,7 @@ void main() {
         host: '127.0.0.1',
         port: 5432,
         userName: 'postgres',
-        password:
-            '0', // Adjust if 'postgres' is the password for the local instance
+        password: 'postgres',
       ),
     );
 
